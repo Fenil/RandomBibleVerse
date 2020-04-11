@@ -22,22 +22,27 @@ public class DemoApplication {
 
     @Bean
     Queue queue() {
+        System.out.println(" Registering Queue "+queueName);
         return new Queue(queueName, false);
     }
 
     @Bean
     TopicExchange exchange() {
+        System.out.println(" Registering Exchange "+topicExchangeName);
         return new TopicExchange(topicExchangeName);
     }
 
     @Bean
     Binding binding(Queue queue, TopicExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with("foo.bar.#");
+        final String routingKey = "foo.bar.#";
+        System.out.println(" Binding Exchange to Queue "+routingKey);
+        return BindingBuilder.bind(queue).to(exchange).with(routingKey);
     }
 
     @Bean
     SimpleMessageListenerContainer container(ConnectionFactory connectionFactory,
                                              MessageListenerAdapter listenerAdapter) {
+        System.out.println(" Simple Message Container Adapter ");
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.setQueueNames(queueName);
@@ -47,6 +52,7 @@ public class DemoApplication {
 
     @Bean
     MessageListenerAdapter listenerAdapter(Receiver receiver) {
+        System.out.println(" Addding Listener Adapter ");
         return new MessageListenerAdapter(receiver, "receiveMessage");
     }
 

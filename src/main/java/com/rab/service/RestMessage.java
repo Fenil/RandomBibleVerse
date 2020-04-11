@@ -36,7 +36,6 @@ public class RestMessage {
         PacketToTransfer pot = new PacketToTransfer();
         pot.setTitle("Bible Verse "+randomNum);
         pot.setVerse(verse);
-        rabbit.convertAndSend(DemoApplication.topicExchangeName,"foo.bar.baz",""+verse);
         return pot;
     }
 
@@ -49,7 +48,7 @@ public class RestMessage {
         x++;
         // concatenate a counter just to differentiate
         packet.setTitle(packet.getTitle()+"::X::"+x);
-
+        rabbit.convertAndSend(DemoApplication.topicExchangeName,"foo.bar.baz",""+packet.getVerse());
         return packet;
     }
 
