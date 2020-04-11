@@ -1,8 +1,10 @@
 package com.rab.service;
 
 
+import com.DemoApplication;
 import com.rab.model.PacketToTransfer;
 import com.rab.util.Bible;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,9 @@ public class RestMessage {
     @Autowired
     public Bible bible;
 
+    @Autowired
+    public RabbitTemplate rabbit;
+
     @GetMapping("/verse")
     public PacketToTransfer getVerse(){
         return getBibleVerse();
@@ -31,6 +36,7 @@ public class RestMessage {
         PacketToTransfer pot = new PacketToTransfer();
         pot.setTitle("Bible Verse "+randomNum);
         pot.setVerse(verse);
+        rabbit.convertAndSend(DemoApplication.topicExchangeName,"foo.bar.baz",""+verse);
         return pot;
     }
 
@@ -42,7 +48,7 @@ public class RestMessage {
     public PacketToTransfer sendMessage(@RequestBody PacketToTransfer packet){
         x++;
         // concatenate a counter just to differentiate
-        packet.setTitle(packet.getTitle()+x);
+        packet.setTitle(packet.getTitle()+"::X::"+x);
 
         return packet;
     }
